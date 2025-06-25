@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Exploit:          VPR-2025-0002
+# Exploit:          VPR-2025-002
 # Affects:          CasaOS <= 0.4.15, ZimaOS <= v1.4.1
 # Purpose:          File Disclosure
 # Description:      Reveals files in a given path using Casaos's users API.

