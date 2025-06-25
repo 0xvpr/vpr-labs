@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Exploit:          VPR-2025-001
-# Affects:          CasaOS <= 0.4.15, ZimaOS <= v1.4.1
+# Affects:          CasaOS <= 0.4.15, ZimaOS <= v1.4.1 (Not as effective in ZimaOS >= v1.4.0)
 # Purpose:          Information Disclosure
 # Description:      Leaks information and user actions via manual websocket connections to a CasaOS server.
 
