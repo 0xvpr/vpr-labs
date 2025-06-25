@@ -1,8 +1,16 @@
-# VPR Labs
-Independent Software Research
+<h1 align="center">VPR Labs</h1>
+<p align="center">
+  <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img src="https://img.shields.io/github/license/0xvpr/vpr-labs?style=flat-square"></a>
+  <br>
+  <h3 align="center">A repository dedicated to independent research, analysis, and findings on a wide range of hardware and software.</h3>
+  <br>
+</p>
 
-## Findings
-### Vendors
+All issues discovered by VPR Labs are subject to a 90-days disclosure deadline. After the deadline has passed, a report on a finding(s) is closed by the vendor without resolution, or a patch has been made available (whichever is earlier), the bug report will become visible to the public. As an exception, the timeline can be extended at the vendor’s request.
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.
+
+## Vendors
 #### [IceWhale Tech](./01-IceWhale)
 | Discovered | Reported   | Vendor | Version   | Finding                | Script                         | CVSS v4 Score | CVSS v4 Metrics                                                 |
 |:----------:|:----------:|:------:|:---------:|:----------------------:|:------------------------------:|:-------------:|:---------------------------------------------------------------:|
