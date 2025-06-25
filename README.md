@@ -2,7 +2,7 @@
 <p align="center">
   <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img src="https://img.shields.io/badge/License-Creative_Commons_Attribution--NonCommercial--NoDerivatives_4.0-44CC11"></a>
   <br>
-  <h3 align="center">A repository dedicated to independent research, analysis, and findings on a wide range of hardware and software.</h3>
+  <h3 align="center">A repository dedicated to Independent security research of various hardware, software, platforms, and technologies.</h3>
   <br>
 </p>
 
