@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Exploit:          VPR-2025-006
-# Affects:          ZimaOS <= v1.4.1
+# Affects:          ZimaOS <= v1.4.4
 # Purpose:          Privilege Escalation
 # Description:      Privilege Escalation to root from ANY user.
 

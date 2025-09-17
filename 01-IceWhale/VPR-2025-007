@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Exploit:          VPR-2025-007
-# Affects:          ZimaOS <= v1.4.1
+# Affects:          ZimaOS <= v1.4.4
 # Purpose:          Arbitrary File Read
 # Description:      Read any file on disk from ANY user.
 
